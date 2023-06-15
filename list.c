@@ -87,6 +87,7 @@ void pushBack(List * list, void * data) {
 }
 
 void pushFrontCircular(List *list, void *data) {
+  
   Node* nuevo_nodo = createNode(data);
 
   if (list->current == NULL) {
@@ -109,6 +110,7 @@ void pushFrontCircular(List *list, void *data) {
       list->tail = nuevo_nodo;
     }
   }
+    list->current = nuevo_nodo;
 }
 //5
 void pushCurrent(List * list, void * data) {

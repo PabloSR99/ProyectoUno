@@ -83,7 +83,6 @@ tipoCarta *crearCarta() {
 
   return carta;
 }
-
 bool esValida(tipoCarta carta, tipoCarta ultimaJugada) {
   // sin tienen igual simbolo se puede tirar, reserva, +2, +4, saltar estan
   // incluidos
@@ -120,13 +119,20 @@ void iniciarPartiada(tipoPartida* juego, List *listaJuego) {
     }else{
       strcpy(jugadorAux->nombre, "MR.HUNDOR");
     }
-    
+    printf("%s",jugadorAux->nombre);
+    printf("\n");
     jugadorAux->mano = createList();
 
     
     for (int f = 0; f < 7; f++) {
       tipoCarta *carta = crearCarta();
       pushBack(jugadorAux->mano, carta);
+    }
+
+    tipoCarta *cartaux = firstList(jugadorAux->mano);
+    for (int f = 0; f < 7; f++) {
+      printf("%d, ", cartaux->numero);
+      cartaux = nextList(jugadorAux->mano);  
     }
     
     pushFrontCircular(listaJuego, jugadorAux);
@@ -139,31 +145,28 @@ void mostrarMano(tipoJugador *jugadorActual){
   printf("Jugador: %s\n",jugadorActual->nombre);
   puts("Mazo:\n");
   
-  carta = firstList(jugadorActual->mano);
   while(carta!=NULL){
 
     printf("%s\n",carta->tipo);
+    printf("%d\n",carta->numero);
+    printf("%s\n",carta->color);
+    carta=nextList(jugadorActual->mano);
+
+    
+   /* printf("%s\n",carta->tipo);
     if(carta->numero < 12)
       printf("%s\n",carta->color);
     if(!carta->especial)
       printf("%d\n",carta->numero);
-    
-    puts("");
-    
-    carta=nextList(jugadorActual->mano);
+    */
   }
-    
-
-
 }
 
 void jugarCarta(tipoPartida *juego,tipoJugador *jugadorActual){
 
   mostrarMano(jugadorActual);
 
-  while(1){
-    
-  }
+  
 }
 
 int main(void) {
@@ -176,17 +179,15 @@ int main(void) {
   List *listaJuego = createList();
   iniciarPartiada(juego, listaJuego);
 
-  tipoJugador* jugadorActual = (tipoJugador*) malloc(sizeof(tipoJugador));
+  tipoJugador *jugadorActual;
   jugadorActual=firstList(listaJuego);
 
-  /*
-    Deberiamos hacer un ciclo infinito de jugar carta que englobe las demás
-    funciones hasta llegar a la condicion de que alguien se haya quedado sin
-    cartas y ser el ganador
-
-    No sé si prefieren hacer el loop en el main o dentro de la f(x) jugarCarta
-  */
-  jugarCarta(juego,jugadorActual);
+  
+  while(jugadorActual != NULL){
+    jugarCarta(juego,jugadorActual);
+    jugadorActual=nextList(listaJuego);
+  }
+  
   
  
 
