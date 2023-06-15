@@ -59,10 +59,10 @@ tipoCarta *crearCarta() {
   }
   
   if(carta->numero > 9){
-    int numeroEspecial = (rand() % 5) + 10;
+    //int numeroEspecial = (rand() % 5) + 10;
     carta->especial = true;
     
-    switch (numeroEspecial){
+    switch (carta->numero){
     case 10:
       strcpy(carta->tipo, "Cancelar");
       break;
@@ -73,7 +73,7 @@ tipoCarta *crearCarta() {
       strcpy(carta->tipo, "+2");
       break;
     case 13:
-      strcpy(carta->color, "+4");
+      strcpy(carta->tipo, "+4");
       break;
     case 14:
       strcpy(carta->tipo, "Cambia color");
@@ -147,9 +147,15 @@ void mostrarMano(tipoJugador *jugadorActual){
   
   while(carta!=NULL){
 
-    printf("%s\n",carta->tipo);
-    printf("%d\n",carta->numero);
-    printf("%s\n",carta->color);
+    if(carta->numero<13){
+      printf("%d\n",carta->numero);
+      printf("%s\n",carta->color);
+      if(carta->numero>9)printf("%s\n",carta->tipo);
+    }else{
+      printf("%s\n",carta->tipo);
+    }
+    puts(barrita);
+    
     carta=nextList(jugadorActual->mano);
 
     
