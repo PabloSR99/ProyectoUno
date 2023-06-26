@@ -232,14 +232,32 @@ void mostrarTop(tipoCarta *carta) {
   puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 } //LISTO (?)
 
+void mostrarJugada(tipoCarta *carta,tipoJugador* jugador) {
+
+  puts("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  printf("El jugador %s jugó\n",jugador->nombre);
+  if (carta->especial == false) {
+    printf(" [ %d,", carta->numero);
+    printf(" %s ]\n", carta->color);
+  } else {
+    if (carta->numero < 13) {
+
+      printf(" [ %s,", carta->color);
+      printf(" %s ]\n", carta->tipo);
+    } else {
+      printf(" [ %s ]\n", carta->tipo);
+    }
+  }
+  puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+} 
+
 bool hayCarta (tipoPartida *juego, tipoJugador *jugadorActual) {
   
   tipoCarta *aux = (tipoCarta*) malloc(sizeof(tipoCarta));
   
-  
   aux = firstList(jugadorActual->mano);
     
-  while(nextList(jugadorActual->mano)!=NULL){
+  while(aux!=NULL){
     if(esValida(juego,aux)==true) return true;
       
     aux = nextList(jugadorActual->mano);
@@ -258,7 +276,7 @@ tipoCarta *seleccionarCarta(tipoPartida *juego, tipoJugador *jugadorActual, int 
     for (int a = 1; a < carta; a++) {
       aux = nextList(jugadorActual->mano);
     }
-    
+    popCurrent(jugadorActual->mano);
     return aux;
   }
 }
@@ -267,11 +285,13 @@ tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego, tipoJugador *jugadorAc
 
   tipoCarta *aux = (tipoCarta*) malloc(sizeof(tipoCarta));
 
-  
   aux = firstList(jugadorActual->mano);
   
-  while(nextList(jugadorActual->mano)!=NULL){
-    if(esValida(juego,aux)==true) return aux;
+  while(aux!=NULL){
+    if(esValida(juego,aux)==true){
+      popCurrent(jugadorActual->mano);
+      return aux;
+    } 
     
     aux = nextList(jugadorActual->mano);
   }
@@ -283,7 +303,7 @@ int validarColor(char *color) {
   if (strcmp(color, "Rojo") == 0 || strcmp(color, "Azul") == 0 ||
       strcmp(color, "Verde") == 0 || strcmp(color, "Amarillo") == 0) {
     return 1; // valido
-  } else {
+  }else{
     return 0; // invalido
   }
 } //LISTO
@@ -291,15 +311,18 @@ int validarColor(char *color) {
 void printBool(bool value) {
     printf("%s\n", value ? "true" : "false");
 }
+
 void validarUNO(tipoJugador* jugador){
   if(jugador->numCartas==1){
     printf("UNO\n");
   }
 }
+
 bool validarGanador(tipoJugador* jugador){
   if(is_empty(jugador->mano)==true)return true;
   return false;
 }
+
 bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego) {
 
   char color[20];
@@ -310,9 +333,9 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego
   bool jugo = false;
   bool pasar = false;
   int numero, carta;
-  
-  
+    
   if(jugadorActual->numJugador==1){
+    
     do{
       printf("\n¿Tienes carta valida? 1.- Si / 2.- No, robo carta (pasas turno).\n");
       scanf("%d", &numero);
@@ -327,9 +350,9 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego
         jugo = hayCarta(juego, jugadorActual);
         
         if (jugo){
-          puts("Selecciona la posicion de tu carta en el mazo\n");
-          scanf("%d", &carta);
           
+          puts("Selecciona la posicion de tu carta en el mazo\n");
+          scanf("%d", &carta);          
           cartaAJugar = seleccionarCarta(juego, jugadorActual, carta);
 
           if(!esValida(juego, cartaAJugar)){
@@ -353,7 +376,7 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego
   if(jugo==true){
     
     juego->ultimaJugada = cartaAJugar;
-    popCurrent(jugadorActual->mano);
+    mostrarJugada(juego->ultimaJugada,jugadorActual);
     jugadorActual->numCartas--;
     validarUNO(jugadorActual);
     if(validarGanador(jugadorActual)==true)return true;
@@ -449,23 +472,24 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego
     pushBack(jugadorActual->mano, carta);
     jugadorActual->numCartas++;
   }
+  return false;
 }
 
 int main(void) {
 
   srand(time(0)); // Funcion para asignar numeros aleatorios a las cartas
-
   tipoPartida *juego = (tipoPartida *)malloc(sizeof(tipoPartida));
   juego->ultimaJugada = crearCarta();
   List *listaJuego = createList();
-
   int opcion;
-
   printf("~~~~~~| BIENVENIDO AL MENU DE UNO |~~~~~~\n\n");
+  
   while (1) {
+    
     menuTexto(&opcion);
 
     switch (opcion) {
+      
     case 1:
       printf("\n--------------------------------------------\n");
       tipoPartida *juego = (tipoPartida *)malloc(sizeof(tipoPartida));
@@ -478,13 +502,16 @@ int main(void) {
       bool ganador=false;
       while(1){
         ganador=jugarCarta(juego, jugadorActual, listaJuego);
-        if(ganador==true){
+          if(ganador==true){
           
-        }
+            break;
+          }
         if(juego->reversa==true){
           jugadorActual = prevList(listaJuego);
+          
         }else{
           jugadorActual = nextList(listaJuego);
+
         }
         
       }
@@ -493,11 +520,12 @@ int main(void) {
 
       break;
     case 2:
+      
       printf("\n--------------------------------------------\n");
       mostrarReglas();
       printf("\n--------------------------------------------\n");
-
       break;
+      
     case 0:
 
       exit(EXIT_SUCCESS);
