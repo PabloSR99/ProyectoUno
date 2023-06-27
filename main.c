@@ -202,17 +202,17 @@ void iniciarPartiada(tipoPartida *juego, List *listaJuego) {
       scanf("%s", nombreAux);
       while (getchar() != '\n')
         ;
-      
+
       jugadorAux->numJugador = 1;
       strcpy(jugadorAux->nombre, nombreAux);
     } else if (i == 1) {
-      strcpy(jugadorAux->nombre, "2");
+      strcpy(jugadorAux->nombre, "MR.HUNDOR");
       jugadorAux->numJugador = 2;
     } else if (i == 2) {
-      strcpy(jugadorAux->nombre, "3");
+      strcpy(jugadorAux->nombre, "CLAUDIO TOLEDO");
       jugadorAux->numJugador = 3;
     } else {
-      strcpy(jugadorAux->nombre, "4");
+      strcpy(jugadorAux->nombre, "VICENTE MEDIANO");
       jugadorAux->numJugador = 4;
     }
     jugadorAux->mano = createList();
@@ -264,7 +264,7 @@ void mostrarMano(tipoJugador *jugadorActual) {
 
 void mostrarTop(tipoCarta *carta) {
 
-  puts("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
   printf("Ultima carta jugada\n");
   if (carta->especial == false) {
     printf(" [ %d,", carta->numero);
@@ -283,7 +283,7 @@ void mostrarTop(tipoCarta *carta) {
 
 void mostrarJugada(tipoCarta *carta, tipoJugador *jugador) {
 
-  puts("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
   printf("El jugador %s jugó\n", jugador->nombre);
   if (carta->especial == false) {
     printf(" [ %d,", carta->numero);
@@ -319,15 +319,15 @@ tipoCarta *seleccionarCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
 
   tipoCarta *aux = (tipoCarta *)malloc(sizeof(tipoCarta));
   int numCarta;
-  
-  puts("Selecciona la posicion de tu carta en el mazo:");
-  scanf("%d",&numCarta);
 
-  while(numCarta > jugadorActual->numCartas){
+  puts("Selecciona la posicion de tu carta en el mazo:");
+  scanf("%d", &numCarta);
+
+  while (numCarta > jugadorActual->numCartas) {
     puts("\nIngrese un numero dentro del rango.");
-    scanf("%d",&numCarta);
+    scanf("%d", &numCarta);
   }
-  
+
   while (1) {
     aux = firstList(jugadorActual->mano);
 
@@ -337,9 +337,9 @@ tipoCarta *seleccionarCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
     popCurrent(jugadorActual->mano);
     return aux;
   }
-} //LISTO
+} // LISTO
 
-tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego, tipoJugador *jugadorActual) {
+tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego,tipoJugador *jugadorActual) {
 
   tipoCarta *aux = (tipoCarta *)malloc(sizeof(tipoCarta));
 
@@ -349,14 +349,13 @@ tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego, tipoJugador *jugadorAc
     if (esValida(juego, aux) == true) {
       popCurrent(jugadorActual->mano);
 
-     
       return aux;
     }
 
     aux = nextList(jugadorActual->mano);
   }
   return aux;
-} //LISTO
+} // LISTO
 
 int validarColor(char *color) {
   //  entrada con color valido
@@ -372,34 +371,34 @@ void printBool(bool value) { printf("%s\n", value ? "true" : "false"); }
 void validarUNO(tipoJugador *jugador) {
   if (jugador->numCartas == 1) {
     puts("ATENCION MESA:\n");
-    printf("EL JUGADOR [ %s ] GRITÓ  UNO.2\n",jugador->nombre);
+    printf("EL JUGADOR [ %s ] GRITÓ  UNO.\n", jugador->nombre);
   }
 }
 
 bool validarGanador(tipoJugador *jugador) {
-  if (is_empty(jugador->mano) == true){
+  if (is_empty(jugador->mano) == true) {
 
     /*
-    Efecto de poner borrar el historial de lña consola y poner el texto de ganador en la esquina superior.
+    Efecto de poner borrar el historial de lña consola y poner el texto de
+    ganador en la esquina superior.
     */
-    printf("\033[2J\033[H"); 
-    puts("!!! Winner Winner Chicken Dinner ¡¡¡\n");
-    printf("> El jugador %s ha ganado la partida. <\n\n",jugador->nombre);
+    printf("\033[2J\033[H");
+    puts("\n!!! Winner Winner Chicken Dinner ¡¡¡\n");
+    printf("> El jugador %s ha ganado la partida. <\n\n", jugador->nombre);
     puts("!!! Winner Winner Chicken Dinner ¡¡¡");
-    
+
     return true;
   }
   return false;
 }
 
-bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
-                List *listaJuego) {
+bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego) {
 
   char color[20];
   mostrarTop(juego->ultimaJugada);
 
-  if(jugadorActual->numJugador == 1) mostrarMano(jugadorActual);
-    
+  if (jugadorActual->numJugador == 1)
+    mostrarMano(jugadorActual);
 
   tipoCarta *cartaAJugar = (tipoCarta *)malloc(sizeof(tipoCarta));
   bool jugo = false;
@@ -415,8 +414,7 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
       printf("\n¿Tienes carta valida? 1.- Si / 2.- No, robo carta (pasas "
              "turno).\n");
       scanf("%d", &numero);
-        
-          
+
       while (getchar() != '\n')
         ;
 
@@ -426,13 +424,11 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
 
       if (numero == 1) {
 
-        //Meti dentro del hayCarta el scanf del N° de la carta
+        // Meti dentro del hayCarta el scanf del N° de la carta
         jugo = hayCarta(juego, jugadorActual);
 
         if (jugo) {
 
-          
-          
           cartaAJugar = seleccionarCarta(juego, jugadorActual);
 
           if (!esValida(juego, cartaAJugar)) {
@@ -458,7 +454,7 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
     juego->ultimaJugada = cartaAJugar;
     mostrarJugada(juego->ultimaJugada, jugadorActual);
     jugadorActual->numCartas--;
-    
+
     validarUNO(jugadorActual);
     if (validarGanador(jugadorActual) == true)
       return true;
@@ -478,6 +474,9 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
 
         else
           jugadorActual = nextList(listaJuego);
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        printf("%s pierde su turno\n",jugadorActual->nombre);
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         break;
 
       case 11:
@@ -485,6 +484,9 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
           juego->reversa = false;
         else
           juego->reversa = true;
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        printf("Se cambia el sentido del juego\n");
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         break;
 
       case 12:
@@ -497,71 +499,75 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
           }
         } else {
           jugadorActual = nextList(listaJuego);
-          
+
           for (int f = 0; f < 2; f++) {
             tipoCarta *carta = crearCarta();
             pushBack(jugadorActual->mano, carta);
             jugadorActual->numCartas++;
           }
         }
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        printf("%s roba 2 cartas\n y pierde su turno\n",jugadorActual->nombre);
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         break;
 
       case 13:
         if (juego->reversa) {
-          
-          jugadorActual = prevList(listaJuego); // Retrocede un jugador en la lista
-          
+
+          jugadorActual =
+              prevList(listaJuego); // Retrocede un jugador en la lista
+
           for (int f = 0; f < 4; f++) {
             tipoCarta *carta = crearCarta();
             pushBack(jugadorActual->mano, carta);
             jugadorActual->numCartas++;
           }
-          
+
         } else {
-          jugadorActual = nextList(listaJuego); //Avanza un jugador en la lista
-          
+          jugadorActual = nextList(listaJuego); // Avanza un jugador en la lista
+
           for (int f = 0; f < 4; f++) {
             tipoCarta *carta = crearCarta();
             pushBack(jugadorActual->mano, carta);
             jugadorActual->numCartas++;
           }
         }
-        //Se queda guardado el jugadorActual con el nodo del jugador siguiente
+        // Se queda guardado el jugadorActual con el nodo del jugador siguiente
 
-        if(juego->reversa){
-          
+        if (juego->reversa) {
+
           jugadorActual = nextList(listaJuego);
-          if (jugadorActual->numJugador == 1 ) { 
-            
+          if (jugadorActual->numJugador == 1) {
+
             printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): ");
             scanf("%s", color);
-            
+
             while (!validarColor(color)) {
               printf("El color ingresado '%s' es inválido.\n", color);
               printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
               scanf("%s", color);
             }
             jugadorActual = prevList(listaJuego);
-            
+
           } else {
             strcpy(color, colores[rand() % 4]);
             jugadorActual = prevList(listaJuego);
           }
-          
-        }else{
+
+        } else {
           jugadorActual = prevList(listaJuego);
-          if (jugadorActual->numJugador == 1 ) { 
-            
+          if (jugadorActual->numJugador == 1) {
+
             printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): ");
             scanf("%s", color);
-            
+
             while (!validarColor(color)) {
               printf("El color ingresado '%s' es inválido.\n", color);
               printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
               scanf("%s", color);
             }
             jugadorActual = nextList(listaJuego);
-            
+
           } else {
             strcpy(color, colores[rand() % 4]);
             jugadorActual = nextList(listaJuego);
@@ -569,7 +575,12 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
         }
         juego->ultimaJugada->numero = -1;
         strcpy(juego->ultimaJugada->color, color);
-
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        printf("%s roba 4 cartas\ny pierde su turno\n",jugadorActual->nombre);
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        printf("cambio de color a %s\n",color);
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         break;
 
       case 14:
@@ -586,6 +597,9 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
         }
         juego->ultimaJugada->numero = 0;
         strcpy(juego->ultimaJugada->color, color);
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        printf("%s cambio el color a %s\n",jugadorActual->nombre,color);
+        puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         break;
       }
     }
@@ -593,6 +607,9 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
     tipoCarta *carta = crearCarta();
     pushBack(jugadorActual->mano, carta);
     jugadorActual->numCartas++;
+    puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    printf("%s roba 1 carta\ny pasa de turno\n",jugadorActual->nombre);
+    puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   }
   return false;
 }
@@ -604,17 +621,17 @@ int main(void) {
   juego->ultimaJugada = crearCartaMazo();
   List *listaJuego = createList();
   int opcion;
-  printf("~~~~~~| BIENVENIDO AL MENU DE UNO |~~~~~~\n\n");
+  printf("~~~~~~| BIENVENIDO AL MENU DE UNO |~~~~~~\n");
 
   while (1) {
 
     menuTexto(&opcion);
-
+    
     switch (opcion) {
 
     case 1:
       printf("\n--------------------------------------------\n");
-      
+
       tipoPartida *juego = (tipoPartida *)malloc(sizeof(tipoPartida));
       juego->ultimaJugada = crearCartaMazo();
       List *listaJuego = createList();
@@ -623,12 +640,11 @@ int main(void) {
       tipoJugador *jugadorActual;
       jugadorActual = firstList(listaJuego);
       bool ganador = false;
-      
+
       while (1) {
         ganador = jugarCarta(juego, jugadorActual, listaJuego);
         if (ganador == true) {
 
-          
           break;
         }
         if (juego->reversa == true) {
@@ -641,7 +657,7 @@ int main(void) {
 
       free(juego);
       free(listaJuego);
-      
+
       printf("\n--------------------------------------------\n");
 
       break;
@@ -659,6 +675,7 @@ int main(void) {
     default:
       printf("Elija una opcion del menu para continuar:\n\n");
     }
+    opcion=-1;
   }
   return 0;
 }
