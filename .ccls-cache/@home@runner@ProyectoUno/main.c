@@ -55,14 +55,31 @@ void menuTexto(int *opcion) {
 }
 
 void mostrarReglas() {
-  puts("BIENVENIDO A UNO: EL JUEGO DE CARTAS\n\n");
-  puts("EL OBJETIVO DEL JUEGO SERÁ QUEDARSE SIN CARTAS EN MANO.\n");
+  puts("¡Bienvenido a UNO Solitario: el juego de cartas en el que podrás "
+       "disfrutar de manera individual este popular juego!\n\n");
+  puts("El objetivo del juego es simple: quedarse sin cartas en la mano.\n");
   puts("A CONTINUACION TE MOSTRAREMOS LAS REGLAS DEL JUEGO:\n");
-  puts("1. CADA JUGADOR TENDRA AL INICIO DE LA PARTIDA 7 CARTAS DE DISTINTO "
-       "TIPO Y COLORES. PUEDEN TOCAR DE TIPO NUMERO DE 0 A 9 Y ESPECIALES.\n");
-  puts("2. EXISTEN 2 TIPOS DE CARTAS, LAS CARTAS COMUNES DE COLOR Y NUMERICAS "
-       "DE 0 A 9 DE DISTINTOS COLORES Y LAS ESPECIALES COMO CAMBIO DE SENTIDO, "
-       "SALTO DE TURNO, +2 CARTAS, +4 CARTAS Y CAMBIAR COLOR.\n");
+  puts("1. Cada jugador recibe 7 cartas al comienzo del juego.\n");
+  puts("2. Las cartas pueden ser de cuatro colores: rojo, azul, verde y "
+       "amarillo.\n");
+  puts("3. Las cartas numéricas tienen un número del 0 al 9 y deben coincidir "
+       "en color o número con la carta superior del mazo. \n");
+  puts("4. Las cartas especiales tienen acciones adicionales:\n");
+  puts("    - Cambio de sentido: invierte el orden de juego.\n"
+       "   - Salto de turno: salta al siguiente jugador.\n"
+       "   - +2: obliga al siguiente jugador a robar dos cartas y perder su "
+       "turno.\n"
+       "   - +4 y cambio de color: obliga al siguiente jugador a robar cuatro "
+       "cartas y cambiar el color del juego.\n");
+  puts("5. Si te quedas sin cartas validas, debes robar una carta. "
+       "del mazo.\n");
+  puts("6. Si tienes una carta válida pero decides no jugarla estratégicamente, puedes hacerlo.\n");
+  puts("7. El juego continúa hasta que un jugador se quede sin cartas en la "
+       "mano.\n");
+  puts("¡Diviértete jugando UNO Solitario!\n");
+
+  puts(" !!! Ten en cuenta que los demás jugadores seguirán las reglas "
+       "automáticamente  ¡¡¡ ");
 }
 
 tipoCarta *crearCarta() {
@@ -270,7 +287,6 @@ void mostrarJugada(tipoCarta *carta, tipoJugador *jugador) {
     printf(" %s ]\n", carta->color);
   } else {
     if (carta->numero < 13) {
-
       printf(" [ %s,", carta->color);
       printf(" %s ]\n", carta->tipo);
     } else {
