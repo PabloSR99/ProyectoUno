@@ -65,15 +65,17 @@ void mostrarReglas() {
   puts("3. Las cartas numéricas tienen un número del 0 al 9 y deben coincidir "
        "en color o número con la carta superior del mazo. \n");
   puts("4. Las cartas especiales tienen acciones adicionales:\n");
-  puts("    - Cambio de sentido: invierte el orden de juego.\n"
+  puts("   - Cambio de sentido: invierte el orden de juego.\n"
        "   - Salto de turno: salta al siguiente jugador.\n"
        "   - +2: obliga al siguiente jugador a robar dos cartas y perder su "
        "turno.\n"
        "   - +4 y cambio de color: obliga al siguiente jugador a robar cuatro "
-       "cartas y cambiar el color del juego.\n");
+       "cartas y cambiar el color del juego.\n"
+       "   - Cambio de color: Puedes cambiar el color del Mazo. \n");
   puts("5. Si te quedas sin cartas validas, debes robar una carta. "
        "del mazo.\n");
-  puts("6. Si tienes una carta válida pero decides no jugarla estratégicamente, puedes hacerlo.\n");
+  puts("6. Si tienes una carta válida pero decides no jugarla "
+       "estratégicamente, puedes hacerlo.\n");
   puts("7. El juego continúa hasta que un jugador se quede sin cartas en la "
        "mano.\n");
   puts("¡Diviértete jugando UNO Solitario!\n");
@@ -339,6 +341,8 @@ tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego,
   while (aux != NULL) {
     if (esValida(juego, aux) == true) {
       popCurrent(jugadorActual->mano);
+
+     
       return aux;
     }
 
@@ -391,6 +395,10 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
       printf("\n¿Tienes carta valida? 1.- Si / 2.- No, robo carta (pasas "
              "turno).\n");
       scanf("%d", &numero);
+      
+      if(numero == 8008) return true; //Ganador automatico (comprobar cosas)
+        
+          
       while (getchar() != '\n')
         ;
 
@@ -431,6 +439,7 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
     juego->ultimaJugada = cartaAJugar;
     mostrarJugada(juego->ultimaJugada, jugadorActual);
     jugadorActual->numCartas--;
+    
     validarUNO(jugadorActual);
     if (validarGanador(jugadorActual) == true)
       return true;
@@ -469,6 +478,7 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
           }
         } else {
           jugadorActual = nextList(listaJuego);
+          
           for (int f = 0; f < 2; f++) {
             tipoCarta *carta = crearCarta();
             pushBack(jugadorActual->mano, carta);
@@ -479,33 +489,65 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
 
       case 13:
         if (juego->reversa) {
-          jugadorActual = prevList(listaJuego);
+          
+          jugadorActual = prevList(listaJuego); // Retrocede un jugador en la lista
+          
           for (int f = 0; f < 4; f++) {
             tipoCarta *carta = crearCarta();
             pushBack(jugadorActual->mano, carta);
             jugadorActual->numCartas++;
           }
+          
         } else {
+          jugadorActual = nextList(listaJuego); //Avanza un jugador en la lista
+          
+          for (int f = 0; f < 4; f++) {
+            tipoCarta *carta = crearCarta();
+            pushBack(jugadorActual->mano, carta);
+            jugadorActual->numCartas++;
+          }
+        }
+        //Se queda guardado el jugadorActual con el nodo del jugador siguiente
+
+        if(juego->reversa){
+          
           jugadorActual = nextList(listaJuego);
-          for (int f = 0; f < 4; f++) {
-            tipoCarta *carta = crearCarta();
-            pushBack(jugadorActual->mano, carta);
-            jugadorActual->numCartas++;
-          }
-        }
-        if (jugadorActual->numJugador == 1) {
-          printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): ");
-          scanf("%s", color);
-
-          while (!validarColor(color)) {
-            printf("El color ingresado '%s' es inválido.\n", color);
-            printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
+          if (jugadorActual->numJugador == 1 ) { 
+            
+            printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): ");
             scanf("%s", color);
+            
+            while (!validarColor(color)) {
+              printf("El color ingresado '%s' es inválido.\n", color);
+              printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
+              scanf("%s", color);
+            }
+            jugadorActual = prevList(listaJuego);
+            
+          } else {
+            strcpy(color, colores[rand() % 4]);
+            jugadorActual = prevList(listaJuego);
           }
-        } else {
-          strcpy(color, colores[rand() % 4]);
+          
+        }else{
+          jugadorActual = prevList(listaJuego);
+          if (jugadorActual->numJugador == 1 ) { 
+            
+            printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): ");
+            scanf("%s", color);
+            
+            while (!validarColor(color)) {
+              printf("El color ingresado '%s' es inválido.\n", color);
+              printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
+              scanf("%s", color);
+            }
+            jugadorActual = nextList(listaJuego);
+            
+          } else {
+            strcpy(color, colores[rand() % 4]);
+            jugadorActual = nextList(listaJuego);
+          }
         }
-
         juego->ultimaJugada->numero = -1;
         strcpy(juego->ultimaJugada->color, color);
 
@@ -561,6 +603,7 @@ int main(void) {
       tipoJugador *jugadorActual;
       jugadorActual = firstList(listaJuego);
       bool ganador = false;
+      
       while (1) {
         ganador = jugarCarta(juego, jugadorActual, listaJuego);
         if (ganador == true) {
@@ -575,6 +618,9 @@ int main(void) {
         }
       }
 
+      free(juego);
+      free(listaJuego);
+      
       printf("\n--------------------------------------------\n");
 
       break;
