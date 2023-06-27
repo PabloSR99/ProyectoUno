@@ -336,9 +336,8 @@ int validarColor(char *color) {
   if (strcmp(color, "Rojo") == 0 || strcmp(color, "Azul") == 0 ||
       strcmp(color, "Verde") == 0 || strcmp(color, "Amarillo") == 0) {
     return 1; // valido
-  } else {
-    return 0; // invalido
   }
+  return 0; // invalido
 } // LISTO
 
 void printBool(bool value) { printf("%s\n", value ? "true" : "false"); }
@@ -366,6 +365,9 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
   bool jugo = false;
   bool pasar = false;
   int numero, carta;
+
+  // Para la automatizacion de color
+  char *colores[] = {"Rojo", "Azul", "Verde", "Amarillo"};
 
   if (jugadorActual->numJugador == 1) {
 
@@ -418,6 +420,13 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
       return true;
 
     if (cartaAJugar->especial) {
+      /*
+  Cancelar turno : 10
+  Invertir turno : 11
+  +2 : 12
+  +4 : 13
+  Cambiar color : 14
+  */
       switch (cartaAJugar->numero) {
       case 10:
         if (juego->reversa)
@@ -468,13 +477,17 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
             jugadorActual->numCartas++;
           }
         }
-        printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): ");
-        scanf("%s", color);
-
-        while (!validarColor(color)) {
-          printf("El color ingresado '%s' es inválido.\n", color);
-          printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
+        if (jugadorActual->numJugador == 1) {
+          printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): ");
           scanf("%s", color);
+
+          while (!validarColor(color)) {
+            printf("El color ingresado '%s' es inválido.\n", color);
+            printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
+            scanf("%s", color);
+          }
+        } else {
+          strcpy(color, colores[rand() % 4]);
         }
 
         juego->ultimaJugada->numero = -1;
@@ -483,12 +496,16 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
         break;
 
       case 14:
-        printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
-        scanf("%s", color);
-        while (!validarColor(color)) {
-          printf("El color ingresado '%s' es inválido.\n", color);
+        if (jugadorActual->numJugador == 1) {
           printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
           scanf("%s", color);
+          while (!validarColor(color)) {
+            printf("El color ingresado '%s' es inválido.\n", color);
+            printf("Ingrese un color (Rojo, Azul, Verde, Amarillo): \n");
+            scanf("%s", color);
+          }
+        } else {
+          strcpy(color, colores[rand() % 4]);
         }
         juego->ultimaJugada->numero = 0;
         strcpy(juego->ultimaJugada->color, color);
