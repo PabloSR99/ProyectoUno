@@ -371,13 +371,24 @@ void printBool(bool value) { printf("%s\n", value ? "true" : "false"); }
 
 void validarUNO(tipoJugador *jugador) {
   if (jugador->numCartas == 1) {
-    printf("UNO\n");
+    puts("ATENCION MESA:\n");
+    printf("EL JUGADOR [ %s ] GRITÓ  UNO.2\n",jugador->nombre);
   }
 }
 
 bool validarGanador(tipoJugador *jugador) {
-  if (is_empty(jugador->mano) == true)
+  if (is_empty(jugador->mano) == true){
+
+    /*
+    Efecto de poner borrar el historial de lña consola y poner el texto de ganador en la esquina superior.
+    */
+    printf("\033[2J\033[H"); 
+    puts("!!! Winner Winner Chicken Dinner ¡¡¡\n");
+    printf("> El jugador %s ha ganado la partida. <\n\n",jugador->nombre);
+    puts("!!! Winner Winner Chicken Dinner ¡¡¡");
+    
     return true;
+  }
   return false;
 }
 
@@ -387,8 +398,8 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
   char color[20];
   mostrarTop(juego->ultimaJugada);
 
- 
-  mostrarMano(jugadorActual);
+  if(jugadorActual->numJugador == 1) mostrarMano(jugadorActual);
+    
 
   tipoCarta *cartaAJugar = (tipoCarta *)malloc(sizeof(tipoCarta));
   bool jugo = false;
@@ -404,9 +415,6 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
       printf("\n¿Tienes carta valida? 1.- Si / 2.- No, robo carta (pasas "
              "turno).\n");
       scanf("%d", &numero);
-
-      //Ingresa este codigo al ingresar la opcion de arriba para ganar automaticamente
-      if(numero == 8008) return true; //Ganador automatico (comprobar cosas)
         
           
       while (getchar() != '\n')
@@ -620,6 +628,7 @@ int main(void) {
         ganador = jugarCarta(juego, jugadorActual, listaJuego);
         if (ganador == true) {
 
+          
           break;
         }
         if (juego->reversa == true) {
