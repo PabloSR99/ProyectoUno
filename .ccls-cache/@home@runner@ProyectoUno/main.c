@@ -202,6 +202,7 @@ void iniciarPartiada(tipoPartida *juego, List *listaJuego) {
       scanf("%s", nombreAux);
       while (getchar() != '\n')
         ;
+      
       jugadorAux->numJugador = 1;
       strcpy(jugadorAux->nombre, nombreAux);
     } else if (i == 1) {
@@ -314,25 +315,31 @@ bool hayCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
   return false;
 }
 
-tipoCarta *seleccionarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
-                            int carta) {
+tipoCarta *seleccionarCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
 
   tipoCarta *aux = (tipoCarta *)malloc(sizeof(tipoCarta));
-  ;
+  int numCarta;
+  
+  puts("Selecciona la posicion de tu carta en el mazo:");
+  scanf("%d",&numCarta);
 
+  while(numCarta > jugadorActual->numCartas){
+    puts("\nIngrese un numero dentro del rango.");
+    scanf("%d",&numCarta);
+  }
+  
   while (1) {
     aux = firstList(jugadorActual->mano);
 
-    for (int a = 1; a < carta; a++) {
+    for (int a = 1; a < numCarta; a++) {
       aux = nextList(jugadorActual->mano);
     }
     popCurrent(jugadorActual->mano);
     return aux;
   }
-}
+} //LISTO
 
-tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego,
-                                      tipoJugador *jugadorActual) {
+tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego, tipoJugador *jugadorActual) {
 
   tipoCarta *aux = (tipoCarta *)malloc(sizeof(tipoCarta));
 
@@ -349,7 +356,7 @@ tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego,
     aux = nextList(jugadorActual->mano);
   }
   return aux;
-}
+} //LISTO
 
 int validarColor(char *color) {
   //  entrada con color valido
@@ -379,6 +386,8 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
 
   char color[20];
   mostrarTop(juego->ultimaJugada);
+
+ 
   mostrarMano(jugadorActual);
 
   tipoCarta *cartaAJugar = (tipoCarta *)malloc(sizeof(tipoCarta));
@@ -395,7 +404,8 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
       printf("\n¿Tienes carta valida? 1.- Si / 2.- No, robo carta (pasas "
              "turno).\n");
       scanf("%d", &numero);
-      
+
+      //Ingresa este codigo al ingresar la opcion de arriba para ganar automaticamente
       if(numero == 8008) return true; //Ganador automatico (comprobar cosas)
         
           
@@ -408,13 +418,14 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual,
 
       if (numero == 1) {
 
+        //Meti dentro del hayCarta el scanf del N° de la carta
         jugo = hayCarta(juego, jugadorActual);
 
         if (jugo) {
 
-          puts("Selecciona la posicion de tu carta en el mazo\n");
-          scanf("%d", &carta);
-          cartaAJugar = seleccionarCarta(juego, jugadorActual, carta);
+          
+          
+          cartaAJugar = seleccionarCarta(juego, jugadorActual);
 
           if (!esValida(juego, cartaAJugar)) {
             jugo = false;
@@ -595,6 +606,7 @@ int main(void) {
 
     case 1:
       printf("\n--------------------------------------------\n");
+      
       tipoPartida *juego = (tipoPartida *)malloc(sizeof(tipoPartida));
       juego->ultimaJugada = crearCartaMazo();
       List *listaJuego = createList();
