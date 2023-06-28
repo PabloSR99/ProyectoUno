@@ -14,6 +14,11 @@ typedef struct {
   bool especial;
   char color[9];
   char tipo[15];
+/*Cancelar turno : 10
+  Invertir turno : 11
+  +2 : 12
+  +4 : 13
+  Cambiar color : 14*/
 } tipoCarta;
 
 typedef struct {
@@ -60,8 +65,7 @@ void mostrarReglas() {
   puts("El objetivo del juego es simple: quedarse sin cartas en la mano.\n");
   puts("A CONTINUACION TE MOSTRAREMOS LAS REGLAS DEL JUEGO:\n");
   puts("1. Cada jugador recibe 7 cartas al comienzo del juego.\n");
-  puts("2. Las cartas pueden ser de cuatro colores: rojo, azul, verde y "
-       "amarillo.\n");
+  puts("2. Las cartas pueden ser de cuatro colores: rojo, azul, verde y amarillo.\n");
   puts("3. Las cartas numéricas tienen un número del 0 al 9 y deben coincidir "
        "en color o número con la carta superior del mazo. \n");
   puts("4. Las cartas especiales tienen acciones adicionales:\n");
@@ -83,20 +87,16 @@ void mostrarReglas() {
   puts(" !!! Ten en cuenta que los demás jugadores seguirán las reglas "
        "automáticamente  ¡¡¡ ");
 }
-
+/*Esta función tomará una variable tipo carta, se asignará un número 
+aleatorio,dependiendo el número se asignará si es especial,y finalmente asignar 
+el color a la carta.
+*/
 tipoCarta *crearCarta() {
 
   tipoCarta *carta = (tipoCarta *)malloc(sizeof(tipoCarta));
   carta->especial = false;
   carta->numero = rand() % 15;
-
-  /*
-  Cancelar turno : 10
-  Invertir turno : 11
-  +2 : 12
-  +4 : 13
-  Cambiar color : 14
-  */
+  
   if (carta->numero < 13) {
     int colorNumero = (rand() % 4) + 1;
 
@@ -139,7 +139,7 @@ tipoCarta *crearCarta() {
   }
 
   return carta;
-} // LISTO(?)
+} 
 
 tipoCarta *crearCartaMazo() {
 
@@ -167,7 +167,9 @@ tipoCarta *crearCartaMazo() {
   }
   return carta;
 }
-
+/*Esta función tomará la carta que querrá usar el usuario y la comparara con la 
+variable tipoCarta “ultimaJugada”, compara las variables, según las condiciones la 
+función retorna TRUE o FALSE y dirá si es válida o no.*/
 bool esValida(tipoPartida *juego, tipoCarta *carta) {
 
   if (carta->numero == 13 || carta->numero == 14)
@@ -187,7 +189,10 @@ bool esValida(tipoPartida *juego, tipoCarta *carta) {
 
   return false;
 }
-
+/*: Esta función se encargará de realizar el comienzo del juego, junto a ello hacer 
+varias acciones llamando diversas funciones,primero se creará la lista de los 
+jugadores,al crear el perfil de un jugador se le asignan sus cartas que serán hechas por la
+función crearCarta, Con esa misma función se asignará la ultimaJugada y finalmente asignar  el sentido.*/
 void iniciarPartiada(tipoPartida *juego, List *listaJuego) {
 
   for (int i = 0; i < 4; i++) {
@@ -232,7 +237,8 @@ void iniciarPartiada(tipoPartida *juego, List *listaJuego) {
   }
   printf("\n");
 }
-
+/* Esta función  toma la lista de la mano del jugador y se mostraran sus cartas 
+para que las pueda ver y saber si tienes cartas válidas para jugar.*/
 void mostrarMano(tipoJugador *jugadorActual) {
 
   tipoCarta *carta = firstList(jugadorActual->mano);
@@ -260,8 +266,8 @@ void mostrarMano(tipoJugador *jugadorActual) {
     carta = nextList(jugadorActual->mano);
     i++;
   }
-} // LISTO (?)
-
+} 
+// En esta función se muestra la última carta jugada sobre la mesa
 void mostrarTop(tipoCarta *carta) {
 
   puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -279,8 +285,8 @@ void mostrarTop(tipoCarta *carta) {
     }
   }
   puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-} // LISTO (?)
-
+} 
+/*si se juega una carta en el turno,la muestra indicando tambien el jugador*/
 void mostrarJugada(tipoCarta *carta, tipoJugador *jugador) {
 
   puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -298,7 +304,9 @@ void mostrarJugada(tipoCarta *carta, tipoJugador *jugador) {
   }
   puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
-
+/*La función Hay carta tomara la lista de la  mano del jugador actual y la recorre,si encuentra 
+una carta válida verificada por la función esValida, retorna TRUE y se podrá jugar el turno, sino 
+retorna FALSE y se saltara el turno del jugador actual.*/
 bool hayCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
 
   tipoCarta *aux = (tipoCarta *)malloc(sizeof(tipoCarta));
@@ -314,7 +322,8 @@ bool hayCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
 
   return false;
 }
-
+/* En esta función el usuario ya habrá visto su mano y entonces tendrá que seleccionar la carta 
+que va a querer jugar, indicando el número de la posición de la carta en la que se encuentra en su mano.*/
 tipoCarta *seleccionarCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
 
   tipoCarta *aux = (tipoCarta *)malloc(sizeof(tipoCarta));
@@ -337,8 +346,9 @@ tipoCarta *seleccionarCarta(tipoPartida *juego, tipoJugador *jugadorActual) {
     popCurrent(jugadorActual->mano);
     return aux;
   }
-} // LISTO
-
+}
+/*Esta función se encarga de seleccionar la carta de los jugadores virtuales en caso que tengan
+para poder jugar, eso ya estará verificado por la función hayCarta.*/
 tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego,tipoJugador *jugadorActual) {
 
   tipoCarta *aux = (tipoCarta *)malloc(sizeof(tipoCarta));
@@ -355,8 +365,8 @@ tipoCarta *seleccionarCartaAutomatico(tipoPartida *juego,tipoJugador *jugadorAct
     aux = nextList(jugadorActual->mano);
   }
   return aux;
-} // LISTO
-
+} 
+/*valida el color cuando hay q cambiaro*/
 int validarColor(char *color) {
   //  entrada con color valido
   if (strcmp(color, "Rojo") == 0 || strcmp(color, "Azul") == 0 ||
@@ -364,24 +374,23 @@ int validarColor(char *color) {
     return 1; // valido
   }
   return 0; // invalido
-} // LISTO
+} 
 
-void printBool(bool value) { printf("%s\n", value ? "true" : "false"); }
-
+//Esta función hará que cuando un jugador tenga 1 carta, imprimirá por pantalla que el dicho jugador tiene una carta.
 void validarUNO(tipoJugador *jugador) {
   if (jugador->numCartas == 1) {
     puts("ATENCION MESA:\n");
     printf("EL JUGADOR [ %s ] GRITÓ  UNO.\n", jugador->nombre);
   }
 }
-
+/*Esta función luego de que el jugador juegue su carta, se verificará que  la lista de 
+su mano sea nula y dictará como ganador el jugador actual y terminará la partida*/
 bool validarGanador(tipoJugador *jugador) {
   if (is_empty(jugador->mano) == true) {
 
-    /*
-    Efecto de poner borrar el historial de lña consola y poner el texto de
-    ganador en la esquina superior.
-    */
+    /*Efecto de poner borrar el historial de lña consola y poner el texto de
+    ganador en la esquina superior.*/
+    
     printf("\033[2J\033[H");
     puts("\n!!! Winner Winner Chicken Dinner ¡¡¡\n");
     printf("> El jugador %s ha ganado la partida. <\n\n", jugador->nombre);
@@ -391,7 +400,10 @@ bool validarGanador(tipoJugador *jugador) {
   }
   return false;
 }
-
+/*Esta función se encarga de tomar la carta seleccionada por el jugador actual y realizar la acción de 
+dicha carta si es especial o no, incluyendo también el caso que no hallan cartas jugables y el jugador 
+pase de turno.Tambien si un jugador se le acaban las cartas,va a retornar true y termina el juego,sino
+retorna false y se sigue jugando*/
 bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego) {
 
   char color[20];
@@ -460,13 +472,7 @@ bool jugarCarta(tipoPartida *juego, tipoJugador *jugadorActual, List *listaJuego
       return true;
 
     if (cartaAJugar->especial) {
-      /*
-  Cancelar turno : 10
-  Invertir turno : 11
-  +2 : 12
-  +4 : 13
-  Cambiar color : 14
-  */
+
       switch (cartaAJugar->numero) {
       case 10:
         if (juego->reversa)
