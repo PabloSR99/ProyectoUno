@@ -5,9 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+
 #define MAXCHAR 20
 #define barrita "\n================================"
 #define barrita2 "\n-------------------------------"
+#define barrita3 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+#define DELAY 45
+#define texto1 "\nEl jugador "
+#define texto2 " jugo\n"
+
 
 typedef struct {
   int numero;
@@ -32,6 +39,20 @@ typedef struct {
   tipoCarta *ultimaJugada;
   bool reversa;
 } tipoPartida;
+
+void mostrarLento(const char* texto, unsigned int retraso) {
+  for (const char* c = texto; *c != '\0'; c++) {
+    putchar(*c);
+    fflush(stdout);  // Para que el carácter se muestre inmediatamente en pantalla
+    usleep(retraso * 1000);  // Retraso en milisegundos
+  }
+}
+
+void mostrarVariableLento(const char* texto, const char* variable, unsigned int retraso) {
+    printf("%s%s", texto, variable);
+    fflush(stdout);
+    usleep(retraso * 1000);
+}
 
 void menuTexto(int *opcion) {
 
@@ -205,21 +226,27 @@ void iniciarPartiada(tipoPartida *juego, List *listaJuego) {
       char nombreAux[20];
       printf("Indica tu usuario: ");
       scanf("%s", nombreAux);
-      while (getchar() != '\n')
-        ;
 
-      jugadorAux->numJugador = 1;
-      strcpy(jugadorAux->nombre, nombreAux);
-    } else if (i == 1) {
+
+        while (getchar() != '\n') ;
+  
+        jugadorAux->numJugador = 1;
+        strcpy(jugadorAux->nombre, nombreAux);
+    }
+    
+    if (i == 1) {
       strcpy(jugadorAux->nombre, "MR.HUNDOR");
       jugadorAux->numJugador = 2;
-    } else if (i == 2) {
-      strcpy(jugadorAux->nombre, "CLAUDIO TOLEDO");
-      jugadorAux->numJugador = 3;
-    } else {
-      strcpy(jugadorAux->nombre, "VICENTE MEDIANO");
-      jugadorAux->numJugador = 4;
     }
+      if (i == 2) {
+        strcpy(jugadorAux->nombre, "CLAUDIO TOLEDO");
+        jugadorAux->numJugador = 3;
+    }
+      if(i == 3){
+        strcpy(jugadorAux->nombre, "VICENTE MEDIANO");
+        jugadorAux->numJugador = 4;
+    }
+      
     jugadorAux->mano = createList();
 
     for (int f = 0; f < 7; f++) {
@@ -288,9 +315,12 @@ void mostrarTop(tipoCarta *carta) {
 } 
 /*si se juega una carta en el turno,la muestra indicando tambien el jugador*/
 void mostrarJugada(tipoCarta *carta, tipoJugador *jugador) {
+  
+  mostrarLento(barrita3, DELAY);
+  mostrarLento(texto1, DELAY);
+  mostrarLento(jugador->nombre, DELAY);
+  mostrarLento(texto2, DELAY);
 
-  puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-  printf("El jugador %s jugó\n", jugador->nombre);
   if (carta->especial == false) {
     printf(" [ %d,", carta->numero);
     printf(" %s ]\n", carta->color);
@@ -302,7 +332,12 @@ void mostrarJugada(tipoCarta *carta, tipoJugador *jugador) {
       printf(" [ %s ]\n", carta->tipo);
     }
   }
-  puts("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+  mostrarLento(barrita3, DELAY);
+  printf("\n");
+  if (jugador->numJugador == 4){
+    printf("Si la consola se detiene, presione enter para continuar.\n");
+    while (getchar() != '\n');
+  }
 }
 /*La función Hay carta tomara la lista de la  mano del jugador actual y la recorre,si encuentra 
 una carta válida verificada por la función esValida, retorna TRUE y se podrá jugar el turno, sino 
@@ -379,8 +414,21 @@ int validarColor(char *color) {
 //Esta función hará que cuando un jugador tenga 1 carta, imprimirá por pantalla que el dicho jugador tiene una carta.
 void validarUNO(tipoJugador *jugador) {
   if (jugador->numCartas == 1) {
-    puts("ATENCION MESA:\n");
-    printf("EL JUGADOR [ %s ] GRITÓ  UNO.\n", jugador->nombre);
+    char char1[20];
+    char char2[20];
+    char char3[20];
+
+    strcpy(char1, "\nATENCION MESA:\n");
+    strcpy(char2, "EL JUGADOR [ ");
+    strcpy(char3, " ] GRITO UNO.\n");
+    
+    mostrarLento(char1, DELAY);
+    mostrarVariableLento(char2, jugador->nombre, DELAY);
+    mostrarLento(char3, DELAY);
+
+    printf("Si la consola se detiene, presione enter para continuar.\n");
+    while(getchar() != '\n');
+    
   }
 }
 /*Esta función luego de que el jugador juegue su carta, se verificará que  la lista de 
