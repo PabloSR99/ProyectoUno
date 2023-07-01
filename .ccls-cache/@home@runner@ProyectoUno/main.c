@@ -40,6 +40,7 @@ typedef struct {
   bool reversa;
 } tipoPartida;
 
+// mostrarLento y mostrarVariableLento son funciones para que imprimas caracteres mas lento.
 void mostrarLento(const char* texto, unsigned int retraso) {
   for (const char* c = texto; *c != '\0'; c++) {
     putchar(*c);
